@@ -1,0 +1,12 @@
+[Unit]
+Description=Attach pre-built XDP program on boot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/xdp-loader load -m skb $(ip -o link show up | awk -F': ' '!/lo/{print $2; exit}') /usr/local/lib/bpf/xdp_pass.o --progsec xdp_pass
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
